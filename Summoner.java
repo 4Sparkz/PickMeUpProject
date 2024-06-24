@@ -1,60 +1,89 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Summoner {
 
-    public final int star7 = 20;
-    public final int star6 = star7 + 50;
-    public final int star5 = star6 + 150;
-    public final int star4 = star5 + 400;
-    public final int star3 = star4 + 1000;
-    public final int star2 = star3 + 3000;
-    public final int star1 = star2 + 6000;
+    private static final Random random = new Random();
 
-    public final File male = new File("/Files/male.txt");
-    public final File female = new File("/Files/female.txt");
-    public final File surname = new File("/Files/last-names.txt");
-    public final int genderOffset = 7;
+    private static int idCounter = 0;
 
-    public void Summon(int n) throws FileNotFoundException{
+    private final static File male = new File("txtFiles/male.txt");
+    private final static File female = new File("txtFiles/female.txt");
+    private final static File surname = new File("txtFiles/last-names.txt");
 
-        for(int i = 1; i<=n; i++){
+    private static List<String> maleNames = new ArrayList<>();
+    private static List<String> femaleNames = new ArrayList<>();
+    private static List<String> lastNames = new ArrayList<>();
 
-            Random random = new Random();
+    static {
+        loadNames(male, maleNames, 7);
+        loadNames(female, femaleNames, 7);
+        loadNames(surname, lastNames, 0);
+    }
 
-            //Raridade
-            int r = random.nextInt(1, star1);
-            int rarity;
-            if(r<star7){
-                rarity = 7;
-            }else if(r<star6){
-                rarity = 6;
-            }else if(r<star5){
-                rarity = 5;
-            }else if(r<star4){
-                rarity = 4;
-            }else if(r<star3){
-                rarity = 3;
-            }else if(r<star2){
-                rarity = 2;
-            }else if(r<star1){
-                rarity = 1;
-            }else{
-                rarity = 0;
+    private static void loadNames(File file, List<String> namesList, int offset) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int lineCount = 0;
+            while ((line = reader.readLine()) != null) {
+                if (lineCount < offset-1) {
+                    lineCount++;
+                    continue;
+                }
+                namesList.add(line);
             }
-
-            //Name and gender
-            r = random.nextInt(0,1);
-            String gender;
-            String name;
-            if(r == 0){
-                gender = "M";
-                Scanner sc = new Scanner(male);
-                
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private static String generateName(String gender) {
+        String name;
+        if(gender.equals("Male")) {
+            name = maleNames.get(random.nextInt(maleNames.size()));
+        } else {
+            name = femaleNames.get(random.nextInt(femaleNames.size()));
+        }
+        name += " " + lastNames.get(random.nextInt(lastNames.size()));
+        return name;
+    }
+
+    public static List<Character> summon(int n) throws FileNotFoundException {
+
+        List<Character> chars = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            int rarity = calculateExponentialRarity();
+            String gender = random.nextInt(2) == 0 ? "Male" : "Female";
+            String name = generateName(gender);
+            System.out.println("Summoned " + name + " with rarity " + rarity + " stars");
+            if (i == 0) {
+                rarity = 1;
+            } else {
+                rarity = 7;
+            }
+            chars.add(new Character(idCounter, name, gender, rarity));
+            idCounter++;
+        }
+        return chars;
+    }
+
+    private static int calculateExponentialRarity() {
+        double rand = random.nextDouble() * 100;
+    
+        if (rand < 88.8889) return 1;
+        else if (rand < 88.8889 + 10) return 2;
+        else if (rand < 98.8889 + 1) return 3;
+        else if (rand < 99.8889 + 0.1) return 4;
+        else if (rand < 99.9889 + 0.01) return 5;
+        else if (rand < 99.9989 + 0.001) return 6;
+        else return 7;
     }
 
 }

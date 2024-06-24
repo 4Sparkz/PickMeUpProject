@@ -14,7 +14,6 @@ public class Gcha {
         System.out.println("SUMMON <number> - summon new characters");
         System.out.println("------------------------------------------");
 
-
     }
 }
 
