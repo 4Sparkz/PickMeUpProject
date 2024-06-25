@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,9 @@ public class Character {
     int exp;
     int level;
 
-    CharacterClass charClass;
+    int talent; //first rarity
+
+    Clazz charClass;
 
     int baseAttack;
     int currentHp;
@@ -35,10 +37,12 @@ public class Character {
         this.id = id;
         this.name = name;
         this.rarity = rarity;
+        this.talent = rarity;
         this.gender = gender;
         this.age = random.nextInt(1, 80);
-        int lifespanBound = Math.max(2, 80 * rarity - age - 1); // Ensures the bound is at least 2
-        this.lifespan = age + random.nextInt(1, lifespanBound);        this.exp = 0;
+        int lifespanBound = Math.max(2, 80 * rarity - age - 1);
+        this.lifespan = age + random.nextInt(1, lifespanBound);
+        this.exp = 0;
         this.level = 1;
         this.expLimit = 100+(rarity-1)*50+level*level*(level/2);                
         generateStats();
@@ -49,15 +53,15 @@ public class Character {
     private void generateClass() {
         
         if (rarity == 1) {
-            charClass = new CharacterClass(Clazz.COMMONER);
+            charClass = Clazz.COMMONER;
             return;
         }
         
         List<int[]> stats = new ArrayList<>(attributes.values());
+
         int highestStatValue = stats.get(0)[0];
         int highestStatIndex = 0;
 
-        // Find the highest stat and its index
         for (int i = 1; i < stats.size(); i++) {
             if (stats.get(i)[0] > highestStatValue) {
                 highestStatValue = stats.get(i)[0];
@@ -65,38 +69,52 @@ public class Character {
             }
         }
 
-        switch(highestStatIndex) {
-            case 0: //STRENGTH
-                charClass = new CharacterClass(Clazz.WARRIOR);
-            break;
-            case 1: //DEXTERITY
-                charClass = new CharacterClass(Clazz.HUNTER);
-            break;
-            case 2: //CONSTITUTION
-                charClass = new CharacterClass(Clazz.BARBARIAN);
-            break;
-            case 3: //LUCK
-                charClass = new CharacterClass(Clazz.ROGUE);
-            break;
-            case 4: //INTELLIGENCE
-                charClass = new CharacterClass(Clazz.CLERIC);
-            break;
-            case 5: //MAGICAL_AFFINITY
-                charClass = new CharacterClass(Clazz.MAGE);
-            break;
-            case 6: //MAGIC_RES
-                
-            break;
-            case 7: //PHYSICAL_RES
-            break;
-            default: //Commoner
-                charClass = new CharacterClass(Clazz.COMMONER);
+        Attributes highestStat = (Attributes) attributes.keySet().toArray()[highestStatIndex];
+
+        List<Clazz> possible = Arrays.asList(Clazz.values()).stream().filter(c -> c.getAttributes().contains(highestStat) && c.getRarity() <= this.rarity).toList();    
+
+        if (possible.isEmpty()) {
+            possible = Arrays.asList(Clazz.values()).stream().filter(c -> c.getRarity() == 2).toList();
         }
+
+        giveClass(possible);
+            
 
     }
 
+    private void giveClass(List<Clazz> possible) {
+        if (possible.isEmpty()) {
+            charClass = Clazz.COMMONER;
+            return;
+        }
+
+        List<Double> weights = new ArrayList<>();
+        double totalWeight = 0;
+        for (Clazz clazz : possible) {
+            double weight = calculateClassWeight(clazz);
+            weights.add(weight);
+            totalWeight += weight;
+        }
+
+
+        double value = random.nextDouble() * totalWeight;
+        double cumulativeWeight = 0;
+        for (int i = 0; i < possible.size(); i++) {
+            cumulativeWeight += weights.get(i);
+            if (value <= cumulativeWeight) {
+                charClass = possible.get(i);
+                return;
+            }
+        }
+    }
+
+    private double calculateClassWeight(Clazz clazz) {
+        double base = 5000.0;
+        double maxRarity = this.rarity;
+        return Math.pow(base, (rarity - clazz.getRarity()) / maxRarity);
+    }
+
     private void generateStats() {
-        // Initialize base stats and IVs
         int r = random.nextInt(1, 11);
         int[] strength = {r + random.nextInt(rarity / 2, 5 + rarity), r};
         
@@ -121,7 +139,6 @@ public class Character {
         r = random.nextInt(1, 11);
         int[] phy_res = {r + random.nextInt(rarity / 2, 5 + rarity), r};
 
-        // Populate the attributes map
         attributes.put(Attributes.STRENGTH, strength);
         attributes.put(Attributes.DEXTERITY, dexterity);
         attributes.put(Attributes.CONSTITUTION, constitution);
@@ -175,11 +192,37 @@ public class Character {
     }
 
     public void rankUp() {
+        if (this.rarity == 7) {
+            System.out.println("Max rarity reached");
+            return;
+        }
         this.rarity++;
         this.level = 1;
         this.exp = 0;
         this.expLimit = 100+(rarity-1)*50+level*level*(level/2);
         updateStats();
+
+        if(charClass.equals(Clazz.COMMONER)) {
+            generateClass();
+        } else {
+            int baseEvolveChance = 5;
+            int talentBonus = talent * 5;
+            int evolveChance = baseEvolveChance + talentBonus;
+            int evolveRoll = random.nextInt(1, 101);
+            System.out.println("Evolve roll: " + evolveRoll + " Evolve chance: " + evolveChance);
+            if (evolveRoll <= evolveChance) {
+                evolve();
+            } else {
+                evolve();
+                System.out.println("Not evolving");
+            }
+        }
+
+    }
+
+    public void evolve() {
+        System.out.println("Evolving...");
+        charClass = Clazz.evolve(charClass);
     }
 
     public int getMaxHp() {

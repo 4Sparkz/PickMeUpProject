@@ -63,11 +63,6 @@ public class Summoner {
             String gender = random.nextInt(2) == 0 ? "Male" : "Female";
             String name = generateName(gender);
             System.out.println("Summoned " + name + " with rarity " + rarity + " stars");
-            if (i == 0) {
-                rarity = 1;
-            } else {
-                rarity = 7;
-            }
             chars.add(new Character(idCounter, name, gender, rarity));
             idCounter++;
         }
