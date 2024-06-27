@@ -21,12 +21,21 @@ public class Player {
                 switch(inputArray[0].toLowerCase()) {
 
                     case "c":
-                        System.out.println("Showing characters");
 
-                        for (Character c : myCharacters) {
-                            System.out.println(c);
+                        if(inputArray.length < 2) {
+                            System.out.println("Showing all characters");
+
+                            for (Character c : myCharacters) {
+                                System.out.println(c);
+                            }
+                            break;
                         }
-                        break;
+
+                        int id = Integer.parseInt(inputArray[1]);
+
+                        Character c = myCharacters.stream().filter(ch -> ch.getId() == id).findFirst().orElse(null);
+
+                        characterMenu(c);
                     
                     case "s":
                         if (inputArray.length < 2) {
@@ -40,23 +49,6 @@ public class Player {
                         // for (Character c : newChars) {
                         //     System.out.println(c);
                         // }
-                        break;
-                    
-                    case "r":
-                        if (inputArray.length < 2) {
-                            System.out.println("Correct format: R <id>");
-                            continue;
-                        }
-                        int id = Integer.parseInt(inputArray[1]);
-                        Character c = myCharacters.stream().filter(ch -> ch.getId() == id).findFirst().orElse(null);
-
-                        if (c == null) {
-                            System.out.println("Character not found");
-                            continue;
-                        }
-
-                        c.rankUp();
-
                         break;
                         
                     case "q":
@@ -77,10 +69,46 @@ public class Player {
 
     private static void printMenu() {
         System.out.println("\n------------------------------------------");
-        System.out.println("C - show characters");
+        System.out.println("C - show all characters");
+        System.out.println("C <id> - show character <id>");
         System.out.println("S <number> - summon new characters");
-        System.out.println("R <id> - rank up character");
         System.out.println("Q - quit");
+        System.out.println("------------------------------------------");
+        System.out.print("> ");
+    }
+
+    private static void characterMenu(Character c) {
+        
+        boolean exited = false;
+        
+        while(!exited) {
+            printCharacterMenu(c);
+            Scanner sc = new Scanner(System.in);
+            switch (sc.nextLine().toLowerCase()) {
+                case "l":
+                    System.out.println("Leveling up character");
+                    break;
+                case "r":
+                    c.rankUp();
+                    break;
+                case "b":
+                    exited = true;
+                    break;
+                default:
+                    System.out.println("Invalid command");
+                    break;
+            }
+        }
+
+    }
+
+    private static void printCharacterMenu(Character c) {
+        System.out.println("\n------------------------------------------\n");
+        System.out.print(c);
+        System.out.println("\n------------------------------------------");
+        System.out.println("L - level up character");
+        System.out.println("R - rank up character");
+        System.out.println("B - go back");
         System.out.println("------------------------------------------");
         System.out.print("> ");
     }

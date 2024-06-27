@@ -1,110 +1,133 @@
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
+
 
 public enum Clazz {
 
     COMMONER(Rarity.COMMON, List.of()),
 
     // DPS
-    WARRIOR(Rarity.UNCOMMON, List.of(Attributes.STRENGTH)),
-    SPEARMAN(Rarity.RARE, List.of(Attributes.STRENGTH, Attributes.DEXTERITY)),
-    SWORDSMAN(Rarity.RARE, List.of(Attributes.STRENGTH)),
-    KNIGHT(Rarity.EPIC, List.of(Attributes.STRENGTH)),
-    LANCER(Rarity.EPIC, List.of(Attributes.STRENGTH, Attributes.DEXTERITY)),
-    SWORDMASTER(Rarity.LEGENDARY, List.of(Attributes.STRENGTH, Attributes.DEXTERITY)),
-    POLEMASTER(Rarity.LEGENDARY, List.of(Attributes.STRENGTH, Attributes.DEXTERITY)),
-    WEAPON_MASTER(Rarity.MYTHIC, List.of(Attributes.STRENGTH)),
-    SWORD_SAINT(Rarity.UNIQUE, List.of(Attributes.STRENGTH, Attributes.DEXTERITY, Attributes.CONSTITUTION)),
-    
-    HUNTER(Rarity.UNCOMMON, List.of(Attributes.DEXTERITY)),
-    SCOUT(Rarity.RARE, List.of(Attributes.DEXTERITY)),
-    ARCHER(Rarity.RARE, List.of(Attributes.DEXTERITY)),
-    BOWMASTER(Rarity.MYTHIC, List.of(Attributes.DEXTERITY)),
+    WARRIOR(Rarity.UNCOMMON, List.of()),
+        SWORDSMAN(Rarity.RARE, List.of(WARRIOR)),
+            KNIGHT(Rarity.EPIC, List.of()),
+                SWORDMASTER(Rarity.LEGENDARY, List.of()),
+                    SWORD_GRANDMASTER(Rarity.MYTHIC, List.of()),
+                        SWORD_SAINT(Rarity.UNIQUE, List.of()),
+        SPEARMAN(Rarity.RARE, List.of(WARRIOR)),
+            LANCER(Rarity.EPIC, List.of()),
+                POLEMASTER(Rarity.LEGENDARY, List.of()),
+                    POLE_GRANDMASTER(Rarity.MYTHIC, List.of()),
+                        SPEAR_SAINT(Rarity.UNIQUE, List.of()),
+        BARBARIAN(Rarity.RARE, List.of(WARRIOR)),
+            BERSERKER(Rarity.EPIC, List.of()),
+            VIKING(Rarity.EPIC, List.of()),
 
-    BANDIT(Rarity.UNCOMMON, List.of(Attributes.LUCK)),
-    ROGUE(Rarity.RARE, List.of(Attributes.LUCK)),
-    ASSASSIN(Rarity.EPIC, List.of(Attributes.LUCK)),
-    
-    // DPS MAGIC
-    MAGE(Rarity.RARE, List.of(Attributes.MAGICAL_AFFINITY)),
-    SORCERER(Rarity.EPIC, List.of(Attributes.MAGICAL_AFFINITY)),
-    ELEMENTALIST(Rarity.LEGENDARY, List.of(Attributes.MAGICAL_AFFINITY)),
-    WARLOCK(Rarity.LEGENDARY, List.of(Attributes.MAGICAL_AFFINITY)),
-    NECROMANCER(Rarity.MYTHIC, List.of(Attributes.MAGICAL_AFFINITY)),
-    ARCHMAGE(Rarity.UNIQUE, List.of(Attributes.MAGICAL_AFFINITY)),
-    
-    // TANK
-    BARBARIAN(Rarity.RARE, List.of(Attributes.CONSTITUTION, Attributes.STRENGTH)),
-    SHIELDER(Rarity.RARE, List.of(Attributes.STRENGTH, Attributes.CONSTITUTION)),
-    PALADIN(Rarity.EPIC, List.of(Attributes.STRENGTH, Attributes.CONSTITUTION)),
-    SENTINEL(Rarity.LEGENDARY, List.of(Attributes.STRENGTH, Attributes.CONSTITUTION)),
+    HUNTER(Rarity.UNCOMMON, List.of()),
+        SCOUT(Rarity.RARE, List.of()),
+            SABOTEUR(Rarity.EPIC, List.of()),
+            BEASTMASTER(Rarity.EPIC, List.of()),
+        ARCHER(Rarity.RARE, List.of()),
+            BOWMAN(Rarity.EPIC, List.of()),
+                BOWMASTER(Rarity.LEGENDARY, List.of()),
+                    BOW_GRANDMASTER(Rarity.MYTHIC, List.of()),
+                        BOW_SAINT(Rarity.UNIQUE, List.of()),
+            CROSSBOWMAN(Rarity.EPIC, List.of()),
+                MUSKETEER(Rarity.LEGENDARY, List.of()),
+                    GUNSLINGER(Rarity.MYTHIC, List.of()),
+                        GUN_SAINT(Rarity.UNIQUE, List.of()),
 
-    // SUPPORT
-    HERBALIST(Rarity.RARE, List.of(Attributes.INTELLIGENCE)),
-    MEDIC(Rarity.RARE, List.of(Attributes.INTELLIGENCE)),
-    CLERIC(Rarity.EPIC, List.of(Attributes.INTELLIGENCE)),
-    BISHOP(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE)),
-    SAINT(Rarity.MYTHIC, List.of(Attributes.INTELLIGENCE)),
-    APOSTLE(Rarity.UNIQUE, List.of(Attributes.INTELLIGENCE)),
-    
-    // UTILITY
-    ALCHEMIST(Rarity.RARE, List.of(Attributes.INTELLIGENCE)),
-    ENCHANTER(Rarity.RARE, List.of(Attributes.INTELLIGENCE)),
-    BLACKSMITH(Rarity.RARE, List.of(Attributes.INTELLIGENCE, Attributes.CONSTITUTION, Attributes.STRENGTH)),
-    ENGINEER(Rarity.RARE, List.of(Attributes.INTELLIGENCE)),
-    ARTIFICER(Rarity.EPIC, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY)),
+    BANDIT(Rarity.UNCOMMON, List.of()),
+        ROGUE(Rarity.RARE, List.of()),
+            ASSASSIN(Rarity.EPIC, List.of()),
+                POISON_MASTER(Rarity.LEGENDARY, List.of()),
 
-    ALCHEMIST_MASTER(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY)),
-    ENCHANTER_MASTER(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY)),
-    BLACKSMITH_MASTER(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY)),
-    ENGINEER_MASTER(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY)),
-    ARTIFICER_MASTER(Rarity.LEGENDARY, List.of(Attributes.INTELLIGENCE, Attributes.MAGICAL_AFFINITY));
+                DAGGER_MASTER(Rarity.LEGENDARY, List.of()),
+                    SHADOW_DANCER(Rarity.MYTHIC, List.of()),
+                        ASSASSIN_LORD(Rarity.UNIQUE, List.of()),
+        THIEF(Rarity.RARE, List.of()),
+            BANDIT_LORD(Rarity.EPIC, List.of()),
+                SWINDLER(Rarity.LEGENDARY, List.of()),
+                    SPECTRAL_THIEF(Rarity.MYTHIC, List.of()),
+                        TRICKSTER(Rarity.UNIQUE, List.of()),
+    
+    TANK(Rarity.UNCOMMON, List.of()),
+        SHIELDER(Rarity.RARE, List.of()),
+            PALADIN(Rarity.EPIC, List.of()),
+                SENTINEL(Rarity.LEGENDARY, List.of()),
+                    GUARDIAN(Rarity.MYTHIC, List.of()),
+                        IMMORTAL(Rarity.UNIQUE, List.of()),
+
+    BEGINNER_MAGE(Rarity.UNCOMMON, List.of()),
+        MAGE(Rarity.RARE, List.of()),
+            SORCERER(Rarity.EPIC, List.of()),
+                DARK_MAGE(Rarity.LEGENDARY, List.of()),
+                    WARLOCK(Rarity.MYTHIC, List.of()),
+                        DEMON_LORD(Rarity.MYTHIC, List.of()),
+                    NECROMANCER(Rarity.MYTHIC, List.of()),
+                        OVERLORD(Rarity.UNIQUE, List.of()),
+                    SPIRITUALIST(Rarity.LEGENDARY, List.of()),
+                        SPIRIT_MASTER(Rarity.MYTHIC, List.of()),
+                            SPIRIT_SAINT(Rarity.UNIQUE, List.of()),
+            ELEMENTALIST(Rarity.LEGENDARY, List.of()),
+                GRANDMAGE(Rarity.MYTHIC, List.of()),
+                    ARCHMAGE(Rarity.UNIQUE, List.of()),
+        PRIEST(Rarity.RARE, List.of()),
+            CLERIC(Rarity.EPIC, List.of()),
+                BISHOP(Rarity.LEGENDARY, List.of()),
+                    CARDINAL(Rarity.MYTHIC, List.of()),
+                        SAINT(Rarity.UNIQUE, List.of()),
+
+    APPRENTICE(Rarity.UNCOMMON, List.of()),
+        HERBALIST(Rarity.RARE, List.of()),
+            POTION_MAKER(Rarity.EPIC, List.of()),
+                ALCHEMIST(Rarity.LEGENDARY, List.of()),
+            MEDIC(Rarity.EPIC, List.of()),
+        TINKERER(Rarity.RARE, List.of()),
+            ENCHANTER(Rarity.EPIC, List.of()),
+            BLACKSMITH(Rarity.EPIC, List.of()),
+                BLACKSMITH_MASTER(Rarity.LEGENDARY, List.of()),
+        ENGINEER(Rarity.RARE, List.of()),
+        FARMER(Rarity.RARE, List.of()),
+        CHEF(Rarity.RARE, List.of()),
+        TEACHER(Rarity.RARE, List.of());
 
     private final Rarity rarity;
+    // private final List<Attributes> attributes;
 
-    private final List<Attributes> attributes;
+    private List<Clazz> fatherClasses;
 
-    Clazz(Rarity rarity, List<Attributes> attributes) {
+    Clazz(Rarity rarity, List<Clazz> sub) {
         this.rarity = rarity;
-        this.attributes = attributes;
+        this.fatherClasses = sub;
     }
 
     public int getRarity() {
         return rarity.getValue();
     }
 
-    public List<Attributes> getAttributes() {
-        return attributes;
-    }
-
-    public static List<Clazz> findPossibleEvolutions(Clazz currentClass) {
-
-        if(currentClass.equals(Clazz.COMMONER)) {
-            return Arrays.stream(Clazz.values())
-                    .filter(c -> c.getRarity() == 2)
-                    .collect(Collectors.toList());
-        }
-
-        int nextRarity = currentClass.getRarity() + 1;
-        return Arrays.stream(Clazz.values())
-                .filter(c -> c.getRarity() == nextRarity && !Collections.disjoint(c.getAttributes(), currentClass.getAttributes()))
-                .collect(Collectors.toList());
-    }
-
     public static Clazz evolve(Clazz currentClass) {
-        List<Clazz> possibleEvolutions = findPossibleEvolutions(currentClass);
+        List<Clazz> possible = Arrays.stream(Clazz.values())
+                .filter(c -> c.fatherClasses.contains(currentClass)).toList();
+        
+        return possible.get(new Random().nextInt(possible.size())); 
+    }
 
-        System.out.println("Possible evolutions: " + possibleEvolutions);
-
-        if (!possibleEvolutions.isEmpty()) {
-            int index = new Random().nextInt(possibleEvolutions.size());
-            System.out.println("Evolving to: " + possibleEvolutions.get(index));
-            return possibleEvolutions.get(index);
-        }
-        return currentClass;
+    public static Clazz getFirstClazz(Attributes highestStat) {
+        switch (highestStat) {
+            case STRENGTH:
+                return WARRIOR;
+            case DEXTERITY:
+                return HUNTER;
+            case INTELLIGENCE:
+                return APPRENTICE;
+            case MAGICAL_AFFINITY:
+                return BEGINNER_MAGE;
+            case LUCK:
+                return BANDIT;                    
+            default:
+                return TANK;
+        } 
     }
     
 }

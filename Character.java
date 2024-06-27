@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,6 @@ public class Character {
 
     Random random = new Random();
 
-    //TODO falta id
     public Character(int id, String name, String gender, int rarity) {
         this.id = id;
         this.name = name;
@@ -56,7 +53,25 @@ public class Character {
             charClass = Clazz.COMMONER;
             return;
         }
-        
+    
+        Attributes highestStat = findHighestAttribute();
+
+        charClass = Clazz.getFirstClazz(highestStat);
+        if (rarity == 2) {
+            return;
+        }
+
+        int counter = rarity ;
+        while(counter > 2) {
+            charClass = Clazz.evolve(charClass);
+            counter--;
+        }
+
+            
+
+    }
+
+    private Attributes findHighestAttribute() {
         List<int[]> stats = new ArrayList<>(attributes.values());
 
         int highestStatValue = stats.get(0)[0];
@@ -69,49 +84,7 @@ public class Character {
             }
         }
 
-        Attributes highestStat = (Attributes) attributes.keySet().toArray()[highestStatIndex];
-
-        List<Clazz> possible = Arrays.asList(Clazz.values()).stream().filter(c -> c.getAttributes().contains(highestStat) && c.getRarity() <= this.rarity).toList();    
-
-        if (possible.isEmpty()) {
-            possible = Arrays.asList(Clazz.values()).stream().filter(c -> c.getRarity() == 2).toList();
-        }
-
-        giveClass(possible);
-            
-
-    }
-
-    private void giveClass(List<Clazz> possible) {
-        if (possible.isEmpty()) {
-            charClass = Clazz.COMMONER;
-            return;
-        }
-
-        List<Double> weights = new ArrayList<>();
-        double totalWeight = 0;
-        for (Clazz clazz : possible) {
-            double weight = calculateClassWeight(clazz);
-            weights.add(weight);
-            totalWeight += weight;
-        }
-
-
-        double value = random.nextDouble() * totalWeight;
-        double cumulativeWeight = 0;
-        for (int i = 0; i < possible.size(); i++) {
-            cumulativeWeight += weights.get(i);
-            if (value <= cumulativeWeight) {
-                charClass = possible.get(i);
-                return;
-            }
-        }
-    }
-
-    private double calculateClassWeight(Clazz clazz) {
-        double base = 5000.0;
-        double maxRarity = this.rarity;
-        return Math.pow(base, (rarity - clazz.getRarity()) / maxRarity);
+        return (Attributes) attributes.keySet().toArray()[highestStatIndex];
     }
 
     private void generateStats() {
